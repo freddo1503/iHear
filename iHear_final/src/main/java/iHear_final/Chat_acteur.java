@@ -245,6 +245,46 @@ public class Chat_acteur extends javax.swing.JFrame {
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
+
+    private void formWindowClosing(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowClosing
+    }//GEN-LAST:event_formWindowClosing
+
+    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
+        /* Si l'utilisateur a cliqué sur le bouton ENVOYER, on envoie */
+    }//GEN-LAST:event_jButton1ActionPerformed
+
+    private void jTextFieldKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_jTextFieldKeyPressed
+        /* On envoie un message si l'utilisateur appuie sur ENTREE depuis la zone de saisie */
+    }//GEN-LAST:event_jTextFieldKeyPressed
+
+    /* Events */
+
+    private void jTextFieldActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jTextFieldActionPerformed
+        // TODO add your handling code here:
+
+    }//GEN-LAST:event_jTextFieldActionPerformed
+
+    private void jTextFieldMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jTextFieldMouseClicked
+        // TODO add your handling code here:
+    }//GEN-LAST:event_jTextFieldMouseClicked
+
+    private void jButton2MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jButton2MouseClicked
+        /* Si l'utilisateur a appuyé sur le bouton RAFRAICHIR, on rafraichit la zone de texte */
+    }//GEN-LAST:event_jButton2MouseClicked
+
+    private void jPanel1MouseMoved(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jPanel1MouseMoved
+        // TODO add your handling code here:
+    }
+
+    /* Ouvrir nouvelle conversation */
+    private void jButton3MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jButton3MouseClicked
+    }//GEN-LAST:event_jButton3MouseClicked
+
+    private void jTabbedPane6MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jTabbedPane6MouseClicked
+        // TODO add your handling code here:
+
+    }//GEN-LAST:event_jTabbedPane6MouseClicked
+
     /**
      * @param args the command line arguments
      * @throws java.sql.SQLException
