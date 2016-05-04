@@ -331,6 +331,38 @@ public class Chat_acteur extends javax.swing.JFrame {
 
     }//GEN-LAST:event_jTabbedPane6MouseClicked
 
+    private String remplaceThisIn(char toProtect, String data){
+        String retour = "";
+
+        for(int i = 0; i < data.length(); i++){
+            if(data.charAt(i) == toProtect){
+                retour = retour + '\\' + data.charAt(i);
+            }
+            else{
+                retour = retour + data.charAt(i);
+            }
+
+        }
+        return retour;
+    }
+
+    private boolean cmpString(String cmp, String cmp2){
+        boolean retour = true;
+
+        if(cmp.length() != cmp2.length())
+            retour = false;
+
+        if(retour)
+            for(int i = 0; i < cmp.length(); i++){
+                if(cmp.charAt(i) != cmp2.charAt(i)){
+                    retour = false;
+                }
+            }
+
+        return retour;
+    }
+
+
     /**
      * @param args the command line arguments
      * @throws java.sql.SQLException
