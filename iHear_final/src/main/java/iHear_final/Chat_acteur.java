@@ -85,32 +85,63 @@ public class Chat_acteur extends javax.swing.JFrame {
             }
         
     }
-    private void addScroll() {
-                
-        javax.swing.JTextArea j = new javax.swing.JTextArea(); /* Création du contenu */
-        javax.swing.JScrollPane k = new javax.swing.JScrollPane(); /* Création onglet */
-        j.setEditable(false); /* On empeche l'utilisateur de pouvoir directement modifier la fenetre */
-        j.setColumns(20);
-        j.setRows(5);
-        
-        k.setViewportView(j);
-
-        indexOnglet++; /* Incrémentation de l'onglet */
-        onglet.add(k); /* Ajout à l'array list */
-        contenuOnglet.add(j); /* Ajout à l'array list */
-        
-        jTabbedPane6.addTab("Room" + indexOnglet, onglet.get(indexOnglet)); /* On nomme la fenetre et on l'ajoute au jTabbedPane */
-    }
     
-    private void deleteScroll(){
-        if(indexOnglet > -1){ /* Controle de la position de l'index */
-            onglet.remove(indexOnglet); /* On enleve l'onglet de l'Array List */
-            contenuOnglet.remove(indexOnglet); /* On enleve le contenu de l'Array List */
-            jTabbedPane6.remove(indexOnglet); /* On l'enleve aussi du jTabbedPane */
-            indexOnglet--; /* On décrémente l'index */
+    private void envoyer(LocalMessage m){
+        if(!m.getText().isEmpty()){ /* Si le message n'est pas vide */
+            contenuOnglet.get(jTabbedPane6.getSelectedIndex()).setText(contenuOnglet.get(jTabbedPane6.getSelectedIndex()).getText() + "\n" + "(" + m.getTime() + ") " + m.getAuthor() + " : " + m.getText());
         }
     }
     
+    private void envoyer(){
+        /* Création et affichage du message local */
+        /* Si le texte que l'utilisateur n'est pas vide, on envoie */
+        LocalMessage l = new LocalMessage();
+        
+        if(!jTextField.getText().isEmpty()){
+            /* Création du message */
+            
+            l.setAuthor(nameUser); /* Ajout de l'auteur */
+            l.setText(remplaceThisIn('\'', jTextField.getText())); /* Ajout du texte depuis la zone de saisie */
+            
+            java.util.Date date= new java.util.Date();
+            l.setTime(new Timestamp(date.getTime()).toString());
+            
+            jTextField.setText(""); /*On vide la zone de saisie */
+            
+            /*if(!contenuOnglet.get(jTabbedPane6.getSelectedIndex()).getText().isEmpty()){ 
+                contenuOnglet.get(jTabbedPane6.getSelectedIndex()).setText(contenuOnglet.get(jTabbedPane6.getSelectedIndex()).getText() + "\n(" + l.getTime() + ") " +  l.getAuthor() + " : " + l.getText());
+            }
+            else {
+                contenuOnglet.get(jTabbedPane6.getSelectedIndex()).setText("(" + l.getTime() + ") " + l.getAuthor() + " : " + l.getText());
+            }*/            
+        }
+        
+        if(jTextField.getBackground() != Color.gray){ /* SI la zone n'est pas grisée, on envoie !
+            /* Création de l'objet gérant les requêtes MySQL */
+            Statement s = null;
+            int r = 0; 
+            int idSalon;
+            int j = 0; /* Variable de parcourt */
+            ArrayList<LocalMessage> list = new ArrayList(); /* Création de la liste de message */
+
+            idSalon = salons.get(jTabbedPane6.getSelectedIndex());
+
+            try {
+                s = c.createStatement();
+                r = s.executeUpdate( "INSERT INTO MESSAGE (idMessage, timestampmessage, contenu, auteur, idUser, idSalon) VALUES (NULL,'" +l.getTime()+"','"+l.getText()+"','"+l.getAuthor()+"','"+idUser+"','"+idSalon+"');" );
+
+            } catch ( SQLException e ) {
+                System.out.println("funtion rafraichir() " + e);
+            } finally {
+                if ( s != null ) { /* fermeture statement */
+                    try {
+                        s.close();
+                    } catch ( SQLException ignore ) {
+                    }
+                }
+            }
+        }
+    }
     
     private void addScroll() {
                 
