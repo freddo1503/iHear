@@ -317,32 +317,7 @@ public class Chat_acteur extends javax.swing.JFrame {
         } 
     }
     
-    private void addScroll() {
-                
-        javax.swing.JTextArea j = new javax.swing.JTextArea(); /* Création du contenu */
-        javax.swing.JScrollPane k = new javax.swing.JScrollPane(); /* Création onglet */
-        j.setEditable(false); /* On empeche l'utilisateur de pouvoir directement modifier la fenetre */
-        j.setColumns(20);
-        j.setRows(5);
-        
-        k.setViewportView(j);
-
-        indexOnglet++; /* Incrémentation de l'onglet */
-        onglet.add(k); /* Ajout à l'array list */
-        contenuOnglet.add(j); /* Ajout à l'array list */
-        
-        jTabbedPane6.addTab("Room" + indexOnglet, onglet.get(indexOnglet)); /* On nomme la fenetre et on l'ajoute au jTabbedPane */
-    }
-    
-    private void deleteScroll(){
-        if(indexOnglet > -1){ /* Controle de la position de l'index */
-            onglet.remove(indexOnglet); /* On enleve l'onglet de l'Array List */
-            contenuOnglet.remove(indexOnglet); /* On enleve le contenu de l'Array List */
-            jTabbedPane6.remove(indexOnglet); /* On l'enleve aussi du jTabbedPane */
-            indexOnglet--; /* On décrémente l'index */
-        }
-    }
-    
+       
     private void envoyer(LocalMessage m){
         if(!m.getText().isEmpty()){ /* Si le message n'est pas vide */
             contenuOnglet.get(jTabbedPane6.getSelectedIndex()).setText(contenuOnglet.get(jTabbedPane6.getSelectedIndex()).getText() + "\n" + "(" + m.getTime() + ") " + m.getAuthor() + " : " + m.getText());
