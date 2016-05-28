@@ -26,6 +26,50 @@ public class Chat_admin extends javax.swing.JFrame {
         initComponents();
     }
 
+    private boolean startConnection(){
+        /* Code relatif à la connexion à la base de données */
+        /* Chargement du driver JDBC pour MySQL */
+        String urlBDD = "jdbc:mysql://localhost:3306/projet_java";
+        String user = "root";
+        String password = "";
+        c = null;
+
+        try {
+            Class.forName( "com.mysql.jdbc.Driver" );
+        } catch ( ClassNotFoundException e ) {
+            /* Gérer les éventuelles erreurs ici. */
+            //System.exit(0); /* Penser à l'affichage d'une erreur */
+            System.out.println("ERREUR SGBD");
+            return false;
+        }
+
+        try{
+            c = DriverManager.getConnection(urlBDD, user, password);
+            /* requete ici*/
+
+            System.out.println("Connection OK.");
+        } catch ( SQLException e ) {
+            /* Gérer les éventuelles erreurs ici */
+            System.out.println(e);
+        }
+
+        return true;
+    }
+
+    private void endConnection(){
+        if ( c != null )
+            try {
+            /* Fermeture de la connexion */
+                System.out.println("Connection KO.");
+                c.close();
+                c = null;
+            } catch ( SQLException ignore ) {
+            /* Si une erreur survient lors de la fermeture, il suffit de l'ignorer. */
+
+            }
+
+    }
+
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -106,6 +150,8 @@ public class Chat_admin extends javax.swing.JFrame {
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("iHear - Administration");
         setResizable(false);
+
+        startConnection();
 
         jPanel3.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "Créer", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, null, new java.awt.Color(102, 0, 0)));
 
@@ -718,7 +764,7 @@ public class Chat_admin extends javax.swing.JFrame {
 
     /* Retirer Relation */
     private void jButton9ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton9ActionPerformed
-        
+
     }//GEN-LAST:event_jButton9ActionPerformed
 
     /**
