@@ -25,7 +25,7 @@ public class Chat_admin extends javax.swing.JFrame {
     public Chat_admin() {
         initComponents();
     }
-
+    
     private boolean startConnection(){
         /* Code relatif à la connexion à la base de données */
         /* Chargement du driver JDBC pour MySQL */
@@ -51,11 +51,11 @@ public class Chat_admin extends javax.swing.JFrame {
         } catch ( SQLException e ) {
             /* Gérer les éventuelles erreurs ici */
             System.out.println(e);
-        }
-
+        } 
+        
         return true;
     }
-
+    
     private void endConnection(){
         if ( c != null )
             try {
@@ -67,10 +67,360 @@ public class Chat_admin extends javax.swing.JFrame {
             /* Si une erreur survient lors de la fermeture, il suffit de l'ignorer. */
 
             }
+        
+    }
+    
+    private boolean cmpString(String cmp, String cmp2){
+        boolean retour = true;
+        
+        if(cmp.length() != cmp2.length())
+            retour = false;
 
+        if(retour)
+            for(int i = 0; i < cmp.length(); i++){
+                if(cmp.charAt(i) != cmp2.charAt(i)){
+                    retour = false;
+                }
+            }
+        
+        return retour;
+    }
+    
+    /* parcourt le string et remplace le caractère demandé */ 
+    private String remplaceThisIn(char toProtect, String data){
+        String retour = "";
+        
+        for(int i = 0; i < data.length(); i++){
+            if(data.charAt(i) == toProtect){
+                retour = retour + '\\' + data.charAt(i);
+            }
+            else{
+                retour = retour + data.charAt(i);
+            }
+                
+        }
+        return retour;
+    }
+    
+    private boolean getPseudoByDatabase(String pseudo){
+        Statement s = null;
+        ResultSet r = null;
+        boolean retour = false;
+        
+        try{
+            s = c.createStatement();
+            r = s.executeQuery("SELECT username FROM UTILISATEURS WHERE username like '" + pseudo + "'");
+            
+            if(r.next()){
+                if(cmpString(pseudo, r.getString("username"))){
+                    /*System.out.println(r.getString("username"));*/
+                    retour = true;
+                }
+            }
+            
+        } catch ( SQLException e ) {
+            System.out.println("funtion getPseudoByDatabase() " + e);
+        } finally {
+            if ( r != null ) { /* fermeture resultset */
+                try {
+                    r.close();
+                } catch ( SQLException ignore ) {
+                }
+            }
+            if ( s != null ) { /* fermeture statement */
+                try {
+                    s.close();
+                } catch ( SQLException ignore ) {
+                }
+            }
+        }
+        
+        return retour;
+    }
+    
+    private int getIdUser(String username){
+        Statement s = null;
+        ResultSet r = null;
+        int retour = 0;
+        
+        try{
+            s = c.createStatement();
+            r = s.executeQuery("SELECT idUser FROM UTILISATEURS WHERE username like '" + username + "'");
+            
+            if(r.next()){
+                retour = r.getInt("idUser");
+            }
+            
+        } catch ( SQLException e ) {
+            System.out.println("funtion getIdUser() " + e);
+        } finally {
+            if ( r != null ) { /* fermeture resultset */
+                try {
+                    r.close();
+                } catch ( SQLException ignore ) {
+                }
+            }
+            if ( s != null ) { /* fermeture statement */
+                try {
+                    s.close();
+                } catch ( SQLException ignore ) {
+                }
+            }
+        }
+        
+        return retour;
+    }
+    
+    private boolean getSaloonByDatabase(String intitule){
+        Statement s = null;
+        ResultSet r = null;
+        boolean retour = false;
+        
+        try{
+            s = c.createStatement();
+            r = s.executeQuery("SELECT intitule FROM SALONS WHERE intitule like '" + intitule + "'");
+            
+            if(r.next()){
+                if(cmpString(intitule, r.getString("intitule"))){
+                    /*System.out.println(r.getString("username"));*/
+                    retour = true;
+                }
+            }
+            
+        } catch ( SQLException e ) {
+            System.out.println("funtion getSaloonByDatabase() " + e);
+        } finally {
+            if ( r != null ) { /* fermeture resultset */
+                try {
+                    r.close();
+                } catch ( SQLException ignore ) {
+                }
+            }
+            if ( s != null ) { /* fermeture statement */
+                try {
+                    s.close();
+                } catch ( SQLException ignore ) {
+                }
+            }
+        }
+        
+        return retour;
+    }
+    
+    private int getIdSaloon(String intitule){
+        Statement s = null;
+        ResultSet r = null;
+        int retour = 0;
+        
+        try{
+            s = c.createStatement();
+            r = s.executeQuery("SELECT idSalon FROM SALONS WHERE intitule like '" + intitule + "'");
+            
+            if(r.next()){
+                retour = r.getInt("idSalon");
+            }
+            
+        } catch ( SQLException e ) {
+            System.out.println("funtion getIdSaloon() " + e);
+        } finally {
+            if ( r != null ) { /* fermeture resultset */
+                try {
+                    r.close();
+                } catch ( SQLException ignore ) {
+                }
+            }
+            if ( s != null ) { /* fermeture statement */
+                try {
+                    s.close();
+                } catch ( SQLException ignore ) {
+                }
+            }
+        }
+        
+        return retour;
+    }
+    
+    private boolean isRelationBetween(String salon, String user){
+        Statement s = null;
+        ResultSet r = null;
+        boolean retour = false;
+        
+        try{
+            s = c.createStatement();
+            r = s.executeQuery("SELECT idSalon FROM UTILISER WHERE idSalon like '" + getIdSaloon(salon) + "' and idUser like '" + getIdUser(user) + "'");
+            
+            if(r.next()){
+                retour = true;
+            }
+            
+        } catch ( SQLException e ) {
+            System.out.println("funtion getIdSaloon() " + e);
+        } finally {
+            if ( r != null ) { /* fermeture resultset */
+                try {
+                    r.close();
+                } catch ( SQLException ignore ) {
+                }
+            }
+            if ( s != null ) { /* fermeture statement */
+                try {
+                    s.close();
+                } catch ( SQLException ignore ) {
+                }
+            }
+        }
+        
+        return retour;
+    }
+    
+    private void creerUtilisateur(String pseudo, String pwd, String nom, String prenom, Boolean admin, String description){
+        Statement s = null;
+        int r = 0;
+        String typeProfil = "admin";
+        
+        /* Vérifier la présence d'un utilisateur ayant le pseudo du pseudo */
+        System.out.println("ECHO");
+        
+        /* Préparation des variables */
+        if(!admin)
+            typeProfil = "user";        
+        
+        try {
+            s = c.createStatement();
+            r = s.executeUpdate("INSERT INTO UTILISATEURS (idUser, username, password, prenom, nom, typeprofil, description) VALUES (DEFAULT, '" + pseudo + "', '" + pwd +"', '" + prenom + "', '" + nom + "', '" + typeProfil + "', '" + description + "')");
+            
+        } catch ( SQLException e ) {
+            System.out.println("funtion creerUtilisateur() " + e);
+        } 
+    }
+    
+    private void modifierUtilisateur(String pseudo, String pwd, String nom, String prenom, String description){
+        Statement s = null;
+        int r = 0;
+        
+        /* Préparer les strings à ajouter à la requête !! */
+        String virgule = " ";
+        String requete = "UPDATE UTILISATEURS SET";
+        
+        if(!pwd.isEmpty()){
+            requete = requete + virgule + "password = '" + pwd +"'";
+            virgule = ", ";
+        }
+        
+        if(!nom.isEmpty()){
+            requete = requete + virgule + "nom =  '" + nom +"'";
+            virgule = ", ";
+        }
+        
+        if(!prenom.isEmpty()){
+            requete = requete + virgule + "prenom =  '" + prenom +"'";
+            virgule = ", ";
+        }
+        
+        if(!description.isEmpty()){
+            requete = requete + virgule + "description =  '" + description +"'";
+            virgule = ", ";
+        }
+        
+        try {
+            s = c.createStatement();
+            r = s.executeUpdate(requete + " WHERE username = '" + pseudo + "'");
+            
+        } catch ( SQLException e ) {
+            System.out.println("funtion modifierUtilisateur() " + e);
+        }
     }
 
-
+    private void creerSalon(String intitule, String couleur, String description){
+        Statement s = null;
+        int r = 0;
+        
+        /* Préparation des variables */
+        String requete = "INSERT INTO SALONS (idSalon, intitule, couleur";
+        String finRequete = "VALUES (DEFAULT, '" + intitule + "'";
+        
+        if(!couleur.isEmpty()){
+            finRequete = finRequete + ", '" + couleur + "'";
+        }
+        else
+            finRequete = finRequete + ", DEFAULT";
+        
+        if(!description.isEmpty()){
+            requete = requete + ", description";
+            finRequete = finRequete + ", '" + description + "'";
+        }
+        
+        requete = requete + ") ";
+        finRequete = finRequete + ")";
+        
+        try {
+            s = c.createStatement();
+            r = s.executeUpdate(requete + finRequete);
+            
+        } catch ( SQLException e ) {
+            System.out.println("funtion creerSalon() " + e);
+        } 
+    }
+    
+    private void modifierSalon(String intitule, String couleur, String description){
+        Statement s = null;
+        int r = 0;
+        
+        /* Préparer les strings à ajouter à la requête !! */
+        String virgule = " ";
+        String requete = "UPDATE SALONS SET";
+        
+        if(!couleur.isEmpty()){
+            requete = requete + virgule + "couleur = '" + couleur +"'";
+            virgule = ", ";
+        }
+        
+        if(!description.isEmpty()){
+            requete = requete + virgule + "description =  '" + description +"'";
+            virgule = ", ";
+        }
+        
+        try {
+            s = c.createStatement();
+            r = s.executeUpdate(requete + " WHERE intitule = '" + intitule + "'");
+            
+        } catch ( SQLException e ) {
+            System.out.println("funtion modifierSalon() " + e);
+        }
+    }
+    
+    private void ajouterRelation(String salon, String utilisateur, int role){
+        Statement s = null;
+        int r = 0;
+        
+        /* Préparation des variables */
+        String requete = "INSERT INTO UTILISER (idUser, idSalon, role) VALUES ('" + getIdUser(utilisateur) + "', '" + getIdSaloon(salon) + "', '" + role + "')";
+                
+        try {
+            s = c.createStatement();
+            r = s.executeUpdate(requete);
+            
+        } catch ( SQLException e ) {
+            System.out.println("funtion creerRelation() " + e);
+        } 
+    }
+    
+    private void retirerRelation(String salon, String utilisateur){
+        Statement s = null;
+        int r = 0;
+        
+        /* Préparation des variables */
+        String requete = "DELETE FROM UTILISER WHERE idUser = '" + getIdUser(utilisateur) + "' and idSalon = '" + getIdSaloon(salon) + "';";
+                
+        try {
+            s = c.createStatement();
+            r = s.executeUpdate(requete);
+            
+        } catch ( SQLException e ) {
+            System.out.println("funtion retirerRelation() " + e);
+        } 
+    }
+    
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -720,7 +1070,86 @@ public class Chat_admin extends javax.swing.JFrame {
 
     /* Créer un utilisateur ! */
     private void jButton1MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jButton1MouseClicked
-
+        //Créer un utilisateur !!
+        boolean creer = true;
+        
+        String  pseudo = jTextField1.getText(),
+                pwd = jTextField2.getText(),
+                pwd2 = jTextField3.getText(),
+                nom = jTextField4.getText(),
+                prenom = jTextField5.getText(),
+                desc = jTextField6.getText();
+        
+        Boolean admin = jCheckBox1.isSelected();
+        
+        /* La créer ne s'opèrera pas si : les champs ne sont pas remplie. */
+        /* Vérifier jTextField1, 2, 3, 4, 5 et 6 */
+        if(pseudo.isEmpty()){
+            jTextField1.setBackground(Color.red);
+            creer = false;
+        } else
+            jTextField1.setBackground(Color.white);
+        
+        if(pwd.isEmpty()){
+            jTextField2.setBackground(Color.red);
+            creer = false;
+        } else
+            jTextField2.setBackground(Color.white);
+        
+        if(pwd2.isEmpty()){
+            jTextField3.setBackground(Color.red);
+            creer = false;
+        } else
+            jTextField3.setBackground(Color.white);
+        
+        if(nom.isEmpty()){
+            jTextField4.setBackground(Color.red);
+            creer = false;
+        } else
+            jTextField4.setBackground(Color.white);
+        
+        if(prenom.isEmpty()){
+            jTextField5.setBackground(Color.red);
+            creer = false;
+        }
+        else
+            jTextField5.setBackground(Color.white);
+        
+        if(pwd2.isEmpty()){
+            jTextField6.setBackground(Color.red);
+            creer = false;
+        }
+        else
+            jTextField6.setBackground(Color.white);
+           
+        if(!cmpString(pwd, pwd2)){ /* Si les mots de passe sont différents */
+            jTextField2.setForeground(Color.red);
+            jTextField3.setForeground(Color.red);
+            creer = false;
+        }
+        else{
+            jTextField2.setForeground(Color.black);
+            jTextField3.setForeground(Color.black);
+        }
+        
+        /* Si le pseudo est déjà pris : erreur */
+        if(getPseudoByDatabase(pseudo)){
+            jTextField1.setBackground(Color.yellow);
+            creer = false;
+        }
+        else
+            jTextField1.setBackground(Color.white);
+        //System.out.println(pseudo + " " + pwd + " " + nom + " " + prenom + " " + desc);
+        
+        if(creer){
+            creerUtilisateur(pseudo, pwd, nom, prenom, admin, desc);
+            jTextField1.setText("");
+            jTextField2.setText("");
+            jTextField3.setText("");
+            jTextField4.setText("");
+            jTextField5.setText("");
+            jTextField6.setText("");
+        }
     }//GEN-LAST:event_jButton1MouseClicked
 
     private void jTextField2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jTextField2ActionPerformed
@@ -731,17 +1160,113 @@ public class Chat_admin extends javax.swing.JFrame {
 
     /* Modifier les données utilisateurs */
     private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
-
+        // On modifie les données d'un utilisateur !!
+        
+        boolean creer = true;
+        
+        String  pseudo = jTextField7.getText(),
+                pwd = jTextField8.getText(),
+                pwd2 = jTextField9.getText(),
+                nom = jTextField10.getText(),
+                prenom = jTextField11.getText(),
+                desc = jTextField12.getText();
+        
+        
+        /* La créer ne s'opèrera pas si : les champs ne sont pas remplie. */
+        /* Vérifier jTextField1, 2, 3, 4, 5 et 6 */
+        if(pseudo.isEmpty()){
+            jTextField7.setBackground(Color.red);
+            creer = false;
+        } else
+            jTextField7.setBackground(Color.white);
+        
+        if((!pwd.isEmpty() || !pwd2.isEmpty()) && !cmpString(pwd, pwd2)){ /* Si les mots de passe sont différents */
+            jTextField8.setForeground(Color.red);
+            jTextField9.setForeground(Color.red);
+            creer = false;
+        }
+        else{
+            jTextField8.setForeground(Color.black);
+            jTextField9.setForeground(Color.black);
+        }
+        
+         /* Si aucun autre variable que le pseudo n'est remplie */
+        if(pwd.isEmpty() && pwd2.isEmpty() && nom.isEmpty() && prenom.isEmpty() && desc.isEmpty()){
+            jTextField8.setBackground(Color.red);
+            jTextField9.setBackground(Color.red);
+            jTextField10.setBackground(Color.red);
+            jTextField11.setBackground(Color.red);
+            jTextField12.setBackground(Color.red);
+            creer = false;
+        }
+        else{
+            jTextField8.setBackground(Color.white);
+            jTextField9.setBackground(Color.white);
+            jTextField10.setBackground(Color.white);
+            jTextField11.setBackground(Color.white);
+            jTextField12.setBackground(Color.white);
+        }
+        
+        /* Si le pseudo n'est pas pris : erreur */
+        if(!getPseudoByDatabase(pseudo)){
+            jTextField7.setBackground(Color.yellow);
+            creer = false;
+        }
+        else
+            jTextField7.setBackground(Color.white);
+        
+        //System.out.println(pseudo + " " + pwd + " " + nom + " " + prenom + " " + desc);
+        
+        if(creer){
+            jTextField7.setText("");
+            jTextField8.setText("");
+            jTextField9.setText("");
+            jTextField10.setText("");
+            jTextField11.setText("");
+            jTextField12.setText("");
+            
+            modifierUtilisateur(pseudo, pwd, nom, prenom, desc);
+        }
     }//GEN-LAST:event_jButton2ActionPerformed
 
-
+    
     private void jTextField18ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jTextField18ActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_jTextField18ActionPerformed
 
     /* Création d'un salon */
     private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
-
+        //Créer un utilisateur !!
+        boolean creer = true;
+        
+        String  nom = jTextField16.getText(),
+                couleur = (String) jComboBox2.getSelectedItem(),
+                desc = jTextField18.getText();
+        
+        desc = remplaceThisIn('\'', desc);
+        
+        /* La créer ne s'opèrera pas si : les champs ne sont pas remplie. */
+        /* Vérifier jTextField16 et 18 */
+        if(nom.isEmpty()){
+            jTextField16.setBackground(Color.red);
+            creer = false;
+        } else
+            jTextField16.setBackground(Color.white);
+        
+        /* Si le nom de salon est déjà pris : erreur */
+        if(getSaloonByDatabase(nom)){
+            jTextField16.setBackground(Color.yellow);
+            creer = false;
+        }
+        else
+            jTextField16.setBackground(Color.white);
+        
+        if(creer){
+            creerSalon(nom, couleur, desc);
+            jTextField16.setText("");
+            jTextField18.setText("");
+        }
+               
     }//GEN-LAST:event_jButton3ActionPerformed
 
     private void jComboBox2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jComboBox2ActionPerformed
@@ -754,17 +1279,150 @@ public class Chat_admin extends javax.swing.JFrame {
 
     /* Modifier un salon ! */
     private void jButton4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton4ActionPerformed
-
+        // On modifie les données d'un utilisateur !!
+        boolean creer = true;
+        
+        String  nom = jTextField19.getText(),
+                couleur = (String) jComboBox3.getSelectedItem(),
+                desc = jTextField22.getText();
+        
+        desc = remplaceThisIn('\'', desc);
+        
+        /* La créer ne s'opèrera pas si : les champs ne sont pas remplie. */
+        /* Vérifier jTextField19 et 22*/
+        if(nom.isEmpty()){
+            jTextField19.setBackground(Color.red);
+            creer = false;
+        } else
+            jTextField19.setBackground(Color.white);
+        
+        /* Si le pseudo n'est pas pris : erreur */
+        if(!getSaloonByDatabase(nom)){
+            jTextField19.setBackground(Color.yellow);
+            creer = false;
+        }
+        else
+            jTextField19.setBackground(Color.white);
+        
+        //System.out.println(pseudo + " " + pwd + " " + nom + " " + prenom + " " + desc);
+        
+        if(creer){
+            jTextField19.setText("");
+            jTextField22.setText("");
+            
+            modifierSalon(nom, couleur, desc);
+        }
     }//GEN-LAST:event_jButton4ActionPerformed
 
     /* Ajouter relation */
     private void jButton5ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton5ActionPerformed
 
+        boolean creer = true;
+        
+        String  salon = jTextField25.getText(),
+                user = jTextField26.getText();
+        
+        int role = 1;
+       
+        if(jCheckBox3.isSelected())
+            role = 0;
+        
+        /* La créer ne s'opèrera pas si : les champs ne sont pas remplie. */
+        /* Vérifier jTextField25 et 26 */
+        if(salon.isEmpty()){
+            jTextField25.setBackground(Color.red);
+            creer = false;
+        } 
+        else if(!getSaloonByDatabase(salon)){
+            jTextField25.setBackground(Color.yellow);
+            creer = false;
+        }        
+        else
+            jTextField25.setBackground(Color.white);
+        
+        
+        if(user.isEmpty()){
+            jTextField26.setBackground(Color.red);
+            creer = false;
+        } 
+        else if(!getPseudoByDatabase(user)){
+            jTextField26.setBackground(Color.yellow);
+            creer = false;
+        }
+        else
+            jTextField26.setBackground(Color.white);
+        
+        
+        /* Si une relation n'existe déjà entre eux */
+        if(creer && isRelationBetween(salon, user)){
+            creer = false;
+            jTextField25.setBackground(Color.yellow);
+            jTextField26.setBackground(Color.yellow);
+        }
+        else {
+            jTextField25.setBackground(Color.white);
+            jTextField26.setBackground(Color.white);
+        }
+            
+        
+        if(creer){
+            ajouterRelation(salon, user, role);
+            jTextField25.setText("");
+            jTextField26.setText("");
+            jCheckBox3.setSelected(false);
+        }
     }//GEN-LAST:event_jButton5ActionPerformed
 
     /* Retirer Relation */
     private void jButton9ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton9ActionPerformed
-
+        boolean creer = true;
+        
+        String  salon = jTextField33.getText(),
+                user = jTextField34.getText();
+        
+        /* La créer ne s'opèrera pas si : les champs ne sont pas remplie. */
+        /* Vérifier jTextField25 et 26 */
+        if(salon.isEmpty()){
+            jTextField33.setBackground(Color.red);
+            creer = false;
+        } 
+        else if(!getSaloonByDatabase(salon)){
+            jTextField33.setBackground(Color.yellow);
+            creer = false;
+        }        
+        else
+            jTextField33.setBackground(Color.white);
+        
+        
+        if(user.isEmpty()){
+            jTextField34.setBackground(Color.red);
+            creer = false;
+        } 
+        else if(!getPseudoByDatabase(user)){
+            jTextField34.setBackground(Color.yellow);
+            creer = false;
+        }
+        else
+            jTextField34.setBackground(Color.white);
+        
+        
+        /* Si une relation existe déjà entre eux */
+        if(creer && !isRelationBetween(salon, user)){
+            creer = false;
+            jTextField33.setBackground(Color.yellow);
+            jTextField34.setBackground(Color.yellow);
+        }
+        else {
+            jTextField33.setBackground(Color.white);
+            jTextField34.setBackground(Color.white);
+        }
+            
+        
+        if(creer){
+            retirerRelation(salon, user);
+            jTextField33.setText("");
+            jTextField34.setText("");
+        }
     }//GEN-LAST:event_jButton9ActionPerformed
 
     /**
@@ -774,7 +1432,7 @@ public class Chat_admin extends javax.swing.JFrame {
         /* Set the Nimbus look and feel */
         //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
         /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
-         * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html
+         * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html 
          */
         try {
             for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
@@ -797,7 +1455,7 @@ public class Chat_admin extends javax.swing.JFrame {
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-
+                
                 new Chat_admin().setVisible(true);
             }
         });
